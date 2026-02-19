@@ -3,9 +3,6 @@ server:
 spring:
   application:
     name: identity-service
-#  data:
-#    mongodb:
-#      uri: mongodb://localhost:27017/identity_db
   config:
     import: "optional:configserver:http://localhost:2222"
 

@@ -17,7 +17,6 @@ public class AuthConfig {
         return http
                 .csrf(csrf -> csrf.disable()) // Disable CSRF for REST APIs
                 .authorizeHttpRequests(auth -> auth
-                        // Allow these endpoints without authentication
                         .requestMatchers("/auth/register", "/auth/login", "/auth/validate", "/swagger-ui/**", "/v3/api-docs/**").permitAll()                        // Lock down everything else
                         .anyRequest().authenticated()
                 )
