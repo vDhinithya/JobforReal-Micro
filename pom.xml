@@ -38,7 +38,8 @@
 		<module>api-gateway</module>
 		<module>config-server</module>
 		<module>identity-service</module>
-	</modules>
+        <module>job-service</module>
+    </modules>
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
