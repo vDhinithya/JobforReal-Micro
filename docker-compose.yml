@@ -1,0 +1,75 @@
+services:
+  discovery-server:
+    build: ./discovery-server
+    ports:
+      - "8761:8761"
+    networks:
+      - jobportal-network
+
+  config-server:
+    build: ./config-server
+    ports:
+      - "2222:2222"
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka/
+      - EUREKA_INSTANCE_PREFER_IP_ADDRESS=true
+    networks:
+      - jobportal-network
+    depends_on:
+      - discovery-server
+
+  api-gateway:
+    build: ./api-gateway
+    ports:
+      - "2020:2020"
+    command: ["--eureka.client.serviceUrl.defaultZone=http://discovery-server:8761/eureka/"]
+    env_file:
+      - .env
+    environment:
+      - SPRING_CONFIG_IMPORT=optional:configserver:http://config-server:2222
+      - EUREKA_INSTANCE_PREFER_IP_ADDRESS=true
+    networks:
+      - jobportal-network
+    depends_on:
+      - config-server
+      - discovery-server
+
+  identity-service:
+    build: ./identity-service
+    ports:
+      - "2021:2021"
+    command: ["--eureka.client.serviceUrl.defaultZone=http://discovery-server:8761/eureka/"]
+    env_file:
+      - .env
+    environment:
+      - SPRING_DATA_MONGODB_URI=${MONGO_URI}
+      - SPRING_CONFIG_IMPORT=optional:configserver:http://config-server:2222
+      - EUREKA_INSTANCE_PREFER_IP_ADDRESS=true
+    networks:
+      - jobportal-network
+    depends_on:
+      - config-server
+      - discovery-server
+
+  job-service:
+    build: ./job-service
+    ports:
+      - "2022:2022"
+    command: ["--eureka.client.serviceUrl.defaultZone=http://discovery-server:8761/eureka/"]
+    env_file:
+      - .env
+    environment:
+      - SERVER_PORT=2022
+      - SPRING_DATA_MONGODB_URI=${MONGO_JOB_URI}
+      - JWT_SECRET=${JWT_SECRET}
+      - SPRING_CONFIG_IMPORT=optional:configserver:http://config-server:2222
+      - EUREKA_INSTANCE_PREFER_IP_ADDRESS=true
+    networks:
+      - jobportal-network
+    depends_on:
+      - config-server
+      - discovery-server
+
+networks:
+  jobportal-network:
+    driver: bridge
