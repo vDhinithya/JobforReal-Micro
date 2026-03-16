@@ -27,4 +27,6 @@ jobs:
 
       # Step 3: Run the Maven build command across all 5 services
       - name: Build with Maven
-        run: ./mvnw clean install -DskipTests
+        run: |
+          chmod +x mvnw
+          ./mvnw clean install -DskipTests
