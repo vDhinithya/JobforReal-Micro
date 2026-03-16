@@ -1,6 +1,5 @@
-name: Microservices CI Pipeline
+name: Microservices CI/CD Pipeline
 
-# to push code for every commit
 on:
   push:
     branches: [ "main", "master" ]
@@ -8,25 +7,54 @@ on:
     branches: [ "main", "master" ]
 
 jobs:
-  build:
-    # to run a new Ubuntu server hosted by GitHub
+  build-and-publish:
     runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Download your code onto the GitHub server
+      # 1. Get the code
       - name: Checkout Source Code
         uses: actions/checkout@v4
 
-      # Step 2: Install the correct version of Java
+      # 2. Setup Java
       - name: Set up JDK 23
         uses: actions/setup-java@v4
         with:
           java-version: '23'
           distribution: 'temurin'
-          cache: maven # This caches your dependencies so future builds are super fast!
+          cache: maven
 
-      # Step 3: Run the Maven build command across all 5 services
+      # 3. Build the .jar files
       - name: Build with Maven
         run: |
           chmod +x mvnw
           ./mvnw clean install -DskipTests
+
+      # 4. Securely log into Docker Hub using your GitHub Secrets
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      # 5. Build and Push the Docker Images!
+      - name: Build and Push Docker Images
+        run: |
+          # Discovery Server
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/discovery-server:latest ./discovery-server
+          docker push ${{ secrets.DOCKER_USERNAME }}/discovery-server:latest
+          
+          # Config Server
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/config-server:latest ./config-server
+          docker push ${{ secrets.DOCKER_USERNAME }}/config-server:latest
+          
+          # API Gateway
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/api-gateway:latest ./api-gateway
+          docker push ${{ secrets.DOCKER_USERNAME }}/api-gateway:latest
+          
+          # Identity Service
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/identity-service:latest ./identity-service
+          docker push ${{ secrets.DOCKER_USERNAME }}/identity-service:latest
+          
+          # Job Service
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/job-service:latest ./job-service
+          docker push ${{ secrets.DOCKER_USERNAME }}/job-service:latest
