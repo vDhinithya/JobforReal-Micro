@@ -23,5 +23,6 @@ public class Job {
     private String location;
     private List<String> skillsRequired;
     private String salaryRange;
+    private String postedByUserId;
     private Date postedDate = new Date();
 }
