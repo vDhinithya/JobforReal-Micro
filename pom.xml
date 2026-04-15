@@ -39,7 +39,8 @@
 		<module>config-server</module>
 		<module>identity-service</module>
         <module>job-service</module>
-    </modules>
+        <module>application-service</module>
+	</modules>
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

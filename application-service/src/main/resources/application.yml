@@ -1,0 +1,10 @@
+spring:
+  application:
+    name: application-service
+  config:
+    import: optional:configserver:http://localhost:2222
+  data:
+    mongodb:
+      uri: ${MONGO_APPLICATIONS_URI}
+server:
+  port: 2024

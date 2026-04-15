@@ -58,3 +58,7 @@ jobs:
           # Job Service
           docker build -t ${{ secrets.DOCKER_USERNAME }}/job-service:latest ./job-service
           docker push ${{ secrets.DOCKER_USERNAME }}/job-service:latest
+          
+          # Application Service
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/application-service:latest ./application-service
+          docker push ${{ secrets.DOCKER_USERNAME }}/application-service:latest

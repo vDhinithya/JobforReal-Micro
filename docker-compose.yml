@@ -70,6 +70,24 @@ services:
       - config-server
       - discovery-server
 
+  application-service:
+    build: ./application-service
+    ports:
+      - "2024:2024"
+    command: [ "--eureka.client.serviceUrl.defaultZone=http://discovery-server:8761/eureka/" ]
+    env_file:
+      - .env
+    environment:
+      - SERVER_PORT=2024
+      - SPRING_DATA_MONGODB_URI=${MONGO_APPLICATION_URI:-${MONGO_JOB_URI}} # Falls back to job DB if app DB isn't set
+      - SPRING_CONFIG_IMPORT=optional:configserver:http://config-server:2222
+      - EUREKA_INSTANCE_PREFER_IP_ADDRESS=true
+    networks:
+      - jobportal-network
+    depends_on:
+      - config-server
+      - discovery-server
+
 networks:
   jobportal-network:
     driver: bridge

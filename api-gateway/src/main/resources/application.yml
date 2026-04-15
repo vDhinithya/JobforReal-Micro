@@ -36,6 +36,7 @@ spring:
           predicates:
             - Path=/applications/**
 
+
 eureka:
   client:
     service-url:
