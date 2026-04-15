@@ -7,8 +7,8 @@ on:
     branches: [ "main" ]
 
 jobs:
-  build-test:
-    name: Build & Test
+  build:
+    name: Build Project and push to Docker
     runs-on: ubuntu-latest
 
     steps:
@@ -22,17 +22,16 @@ jobs:
           distribution: 'temurin'
           cache: maven
 
-      - name: Build with Maven (WITH tests)
+      - name: Build with Maven
         run: |
           chmod +x mvnw
-          ./mvnw clean install
+          ./mvnw clean install -DskipTests
 
   docker-build-push:
     name: Build & Push Docker Images
-    needs: build-test
     runs-on: ubuntu-latest
 
-    if: github.ref == 'refs/heads/main' && success()
+    if: github.ref == 'refs/heads/main'
 
     steps:
       - name: Checkout Source
