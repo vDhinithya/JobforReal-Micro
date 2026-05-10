@@ -46,7 +46,7 @@ jobs:
 
       - name: Build and Push Docker Images
         run: |
-          SERVICES=("discovery-server" "config-server" "api-gateway" "identity-service" "job-service" "application-service")
+          SERVICES=("discovery-server" "config-server" "api-gateway" "identity-service" "job-service" "application-service" "notification-service")
 
           for SERVICE in "${SERVICES[@]}"
           do
